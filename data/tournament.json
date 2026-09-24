@@ -1,0 +1,31 @@
+{
+  "name": "Royal Round Robin 26/27",
+  "section": "Invitational",
+  "format": "Round robin",
+  "timeControl": "Classical",
+  "totalRounds": 7,
+  "updated": "2026-09-24",
+  "scoring": { "win": 1, "draw": 0.5, "loss": 0, "bye": 0 },
+  "tiebreaks": ["SB", "DE", "WIN", "BWG", "LOT"],
+  "players": [
+    { "id": "kaplow",      "name": "Kaplow, Orfeo",           "seat": 1 },
+    { "id": "guo",         "name": "Guo, Andi",               "seat": 2 },
+    { "id": "h-peukert",   "name": "Peukert, Hauke",          "seat": 3 },
+    { "id": "tomaszewski", "name": "Tomaszewski, Vincent",    "seat": 4 },
+    { "id": "grozea",      "name": "Grozea, Nicolae Theodor", "seat": 5 },
+    { "id": "johnen",      "name": "Johnen, Paul",            "seat": 6 },
+    { "id": "j-peukert",   "name": "Peukert, Jonathan",       "seat": 7 },
+    { "id": "gruenzner",   "name": "Grünzner, Malwin",        "seat": 8 }
+  ],
+  "rounds": [
+    {
+      "number": 1,
+      "pairings": [
+        { "board": 1, "white": "kaplow",      "black": "gruenzner", "result": "*" },
+        { "board": 2, "white": "guo",         "black": "j-peukert", "result": "0-1",     "date": "2026-09-13", "pgn": "games/r1-b2.pgn" },
+        { "board": 3, "white": "h-peukert",   "black": "johnen",    "result": "1/2-1/2", "date": "2026-09-24", "pgn": "games/r1-b3.pgn" },
+        { "board": 4, "white": "tomaszewski", "black": "grozea",    "result": "1-0",     "date": "2026-09-08", "pgn": "games/r1-b4.pgn" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Royal Round Robin 26/27</title>
+  <meta name="description" content="Live standings, pairings, games and stats for the Royal Round Robin 26/27 — Invitational.">
+  <meta name="theme-color" content="#F4EFE6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#131418" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Royal Round Robin 26/27 — Invitational">
+  <meta property="og:description" content="Standings, pairings, games and stats.">
+  <meta property="og:image" content="https://cappylot.github.io/rrr_26-27/img/og.png">
+  <meta property="og:url" content="https://cappylot.github.io/rrr_26-27/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="vendor/cm-chessboard/assets/chessboard.css">
+  <link rel="stylesheet" href="vendor/cm-chessboard/assets/extensions/markers/markers.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/print.css" media="print">
+  <script>
+    // Apply a saved theme before first paint so there's no flash.
+    try { const t = localStorage.getItem('rrr-theme'); if (t) document.documentElement.dataset.theme = t } catch {}
+  </script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="app-header">
+    <div class="header-inner">
+      <a class="brand" href="#/standings" aria-label="Royal Round Robin 26/27 — home">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <defs>
+            <linearGradient id="bm-sheen" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#fff" stop-opacity=".22"/>
+              <stop offset=".5" stop-color="#fff" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <rect width="32" height="32" rx="9" fill="var(--blue-mark)"/>
+          <rect width="32" height="32" rx="9" fill="url(#bm-sheen)"/>
+          <line x1="10.9" y1="10.9" x2="21.1" y2="21.1" stroke="var(--brass-mark)" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="10.9" cy="10.9" r="4.8" fill="#fff"/>
+          <circle cx="21.1" cy="21.1" r="4.8" fill="#fff"/>
+        </svg>
+        <span class="brand-text">
+          <span class="brand-title">Royal Round Robin <span class="nowrap">26/27</span></span>
+          <span class="brand-sub" id="brand-sub">Invitational</span>
+        </span>
+      </a>
+
+      <nav class="top-nav" aria-label="Sections">
+        <a href="#/standings" data-nav="standings">Standings</a>
+        <a href="#/pairings" data-nav="pairings">Pairings</a>
+        <a href="#/games" data-nav="games">Games</a>
+        <a href="#/stats" data-nav="stats">Stats</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch colour theme" title="Theme">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-sun"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-moon"><path d="M20 14.6A8.3 8.3 0 0 1 9.4 4a8.3 8.3 0 1 0 10.6 10.6Z"/></svg>
+        </button>
+        <button class="btn btn-export" id="export-open" type="button" aria-haspopup="dialog">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11M7.5 10l4.5 4.5 4.5-4.5M5 19.5h14"/></svg>
+          <span>Export</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div id="problems" class="problems" role="alert" hidden></div>
+
+  <main id="main" class="app-main" tabindex="-1">
+    <div class="loading" aria-live="polite">Loading tournament…</div>
+  </main>
+
+  <footer class="app-footer">
+    <p id="footer-updated"></p>
+    <p class="credits">
+      Built for the <span id="footer-title">Royal Round Robin 26/27</span>.
+      Pieces by <a href="https://commons.wikimedia.org/wiki/Category:SVG_chess_pieces/Standard">Cburnett</a> (CC BY-SA 3.0) via
+      <a href="https://github.com/shaack/cm-chessboard">cm-chessboard</a>; moves by <a href="https://github.com/jhlywa/chess.js">chess.js</a>.
+    </p>
+  </footer>
+
+  <nav class="tab-bar" aria-label="Sections">
+    <a href="#/standings" data-nav="standings">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-6"/></svg>
+      <span>Standings</span>
+    </a>
+    <a href="#/pairings" data-nav="pairings">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M3.5 12h17M12 5v14"/></svg>
+      <span>Pairings</span>
+    </a>
+    <a href="#/games" data-nav="games">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6.6" r="2.7"/><path d="M9.3 11.2h5.4M10.4 11.2 9.3 17.3h5.4l-1.1-6.1M7 20h10"/></svg>
+      <span>Games</span>
+    </a>
+    <a href="#/stats" data-nav="stats">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5H12Z"/><path d="M15 3.9A8.5 8.5 0 0 1 20.1 9H15Z"/></svg>
+      <span>Stats</span>
+    </a>
+  </nav>
+
+  <dialog id="export-sheet" class="sheet" aria-labelledby="export-title">
+    <div class="sheet-inner">
+      <div class="sheet-grabber" aria-hidden="true"></div>
+      <div class="sheet-head">
+        <h2 id="export-title">Export</h2>
+        <button class="icon-btn" type="button" data-close aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <div id="export-body"></div>
+    </div>
+  </dialog>
+
+  <div id="print-root" class="print-root" aria-hidden="true"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+/* Print / Save as PDF. The clean documents mirror ChessManager's PDFs: bold title, grey subtitle,
+   a 2pt BoardGreen rule, then a simple table. Any other page prints without the app chrome. */
+
+@page { margin: 14mm 12mm; }
+
+html, body { background: #fff !important; color: #000 !important; }
+body { padding: 0 !important; font: 11pt/1.4 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Arial, sans-serif; }
+
+.app-header, .tab-bar, .app-footer, .problems, dialog, .toast, .tooltip, .skip-link,
+.controls, .actions, .filters, .chips, .now .btn, .back { display: none !important; }
+
+.app-main { max-width: none; padding: 0; }
+.card { box-shadow: none !important; border-color: #ccc !important; background: #fff !important; break-inside: avoid; }
+a { color: inherit !important; }
+.view { animation: none !important; }
+
+body.print-doc .app-main { display: none !important; }
+body.print-doc .print-root { display: block !important; }
+
+.pdoc header { border-bottom: 2pt solid #1F7A5C; padding-bottom: 6pt; margin-bottom: 10pt; }
+.pdoc h1 { font-size: 16pt; font-weight: 700; margin: 0; }
+.pdoc header p { font-size: 11.5pt; color: #666; margin: 2pt 0 0; }
+.pdoc table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.pdoc th { font-size: 9pt; font-weight: 700; text-transform: none; letter-spacing: 0; color: #000; text-align: left; padding: 4pt 5pt; border: 0; border-bottom: 1pt solid rgba(0, 0, 0, .5); }
+.pdoc td { font-size: 11.5pt; padding: 5pt; border: 0; }
+.pdoc .bd { width: 26pt; text-align: right; }
+.pdoc .l { text-align: left; }
+.pdoc .r { text-align: right; }
+.pdoc .c { text-align: center; }
+.pdoc .b { font-weight: 700; }
+.pdoc .blank, .pdoc .filled { display: inline-block; min-width: 26pt; border-bottom: 1pt solid #000; text-align: center; }
+.pdoc .filled { font-size: 9pt; }
+.pdoc table.x td, .pdoc table.x th { border: .5pt solid #bbb; font-size: 10pt; }
+.pdoc table.x td.self { background: #e6e6e6; }
+.pdoc .foot { margin-top: 10pt; font-size: 9pt; color: #666; }
+
+.board-frame { box-shadow: none !important; }
+.moves { max-height: none !important; overflow: visible !important; }
+
+/* Game pages: compact board and move list. */
+.board-col { max-width: 340px !important; }
+.moves button, .moves .no { padding: 1pt 4pt !important; min-height: 0 !important; font-size: 10pt !important; }
+.moves button[aria-current] { background: none !important; color: #000 !important; text-decoration: underline; }
+.viewer-stage { display: block !important; }
+.side-col { position: static !important; margin-top: 10pt; }

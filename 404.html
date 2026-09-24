@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Royal Round Robin 26/27</title>
+  <script>
+    // Unknown path: send people to the site root (routes live after the #).
+    const parts = location.pathname.split('/').filter(Boolean)
+    const base = location.hostname.endsWith('github.io') && parts.length ? `/${parts[0]}/` : '/'
+    location.replace(base)
+  </script>
+</head>
+<body><p><a href="./">Go to the tournament page</a></p></body>
+</html>

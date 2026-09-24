@@ -1,0 +1,15 @@
+{
+  "name": "Royal Round Robin 26/27",
+  "short_name": "RRR 26/27",
+  "description": "Standings, pairings, games and stats for the Royal Round Robin 26/27 — Invitational.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F4EFE6",
+  "theme_color": "#F4EFE6",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

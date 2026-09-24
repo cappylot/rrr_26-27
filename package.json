@@ -1,0 +1,10 @@
+{
+  "name": "rrr-26-27",
+  "private": true,
+  "description": "Royal Round Robin 26/27 tournament website (static; no build step).",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "serve": "npx http-server -c-1 -p 8080 ."
+  }
+}
