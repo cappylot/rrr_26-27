@@ -132,7 +132,22 @@ function setupInteractions() {
   })
 }
 
+/**
+ * Keep the page at 100% on phones. Android honours user-scalable=no in the viewport tag, but iOS
+ * Safari ignores it for pinches, so block its gesture events and any two-finger touch move.
+ * (Double-tap zoom is turned off in CSS with touch-action: manipulation.)
+ */
+function preventZoom() {
+  for (const type of ['gesturestart', 'gesturechange', 'gestureend']) {
+    document.addEventListener(type, (e) => e.preventDefault(), { passive: false })
+  }
+  document.addEventListener('touchmove', (e) => {
+    if (e.touches.length > 1) e.preventDefault()
+  }, { passive: false })
+}
+
 async function start() {
+  preventZoom()
   setupTheme()
   installTooltip()
   try {

@@ -74,6 +74,9 @@ ids are listed under `"players"`.
 The site shows only the rounds that are in the file. If something is wrong, for example an
 unknown player id or a player paired twice, a yellow banner lists the problem.
 
+On phones and tablets, pinch-zoom and double-tap zoom are turned off so the site behaves like an
+app. Desktop browser zoom (Ctrl/⌘ +) still works.
+
 ## Standings and tiebreaks
 
 The standings use ChessManager's round-robin rules, so the site and the app always agree:
