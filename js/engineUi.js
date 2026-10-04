@@ -4,7 +4,7 @@
 import { esc, plural } from './format.js'
 import { icon } from './ui.js'
 import { LABEL, formatEval, scoreToCp, winPercent } from './review.js'
-import { uciToSan } from './analyse.js'
+import { uciToSan } from './evaluate.js'
 
 export const DEPTHS = [16, 18, 20, 22, 26, 30]
 

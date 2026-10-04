@@ -8,7 +8,7 @@ import {
   winPercent, moveAccuracy, classify, gameAccuracy, buildReview, movesHash, bookPlies, formatEval, scoreToCp,
 } from '../js/review.js'
 import { parseInfo } from '../js/uci.js'
-import { uciToSan } from '../js/analyse.js'
+import { uciToSan } from '../js/evaluate.js'
 
 const close = (a, b, eps = 0.01) => assert.ok(Math.abs(a - b) < eps, `${a} ≈ ${b}`)
 

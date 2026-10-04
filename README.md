@@ -134,7 +134,7 @@ npm run serve       # http://localhost:8080
 | `css/style.css` | Screen styles. The colours are the ChessManager palette. |
 | `css/print.css` | Print and PDF layout. |
 | `data/openings.json` | The ECO opening table. Regenerate it with `tools/build-openings.mjs`. |
-| `js/review.js`, `js/uci.js`, `js/analyse.js` | Engine review maths (tested), the UCI client and the analysis runner shared by the browser and `tools/analyze.mjs`. |
+| `js/review.js`, `js/uci.js`, `js/evaluate.js` | Engine review maths (tested), the UCI client and the analysis runner shared by the browser and `tools/analyze.mjs`. |
 | `data/analysis/` | Stockfish evaluations per game, written by `tools/analyze.mjs`. |
 | `vendor/` | Third-party libraries, copied in unchanged. |
 

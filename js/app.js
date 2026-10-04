@@ -10,9 +10,8 @@ import { renderPairings } from './views/pairings.js'
 import { renderGames } from './views/games.js'
 import { renderStats } from './views/stats.js'
 import { renderPlayer } from './views/player.js'
-import { renderViewer, mountViewer } from './viewer.js'
 import { setupExport } from './exportSheet.js'
-import { installTooltip, loadSprite } from './ui.js'
+import { installTooltip, loadSprite, icon } from './ui.js'
 
 const main = document.getElementById('main')
 const ctx = { model: null, rows: [], stats: null, openings: null, route: null }
@@ -37,6 +36,19 @@ function parseRoute() {
 
 const NAV_FOR = { standings: 'standings', player: 'standings', pairings: 'pairings', games: 'games', game: 'games', analysis: 'games', stats: 'stats' }
 
+/**
+ * The game viewer (board, engine, review) is loaded on first use, so if a content blocker stops
+ * one of its scripts only the game pages are affected, never the standings.
+ */
+let viewerModule = null
+function loadViewer() {
+  viewerModule ??= import('./viewer.js').catch((err) => {
+    viewerModule = null
+    throw err
+  })
+  return viewerModule
+}
+
 async function render({ scroll = true } = {}) {
   const token = ++renderToken
   const route = parseRoute()
@@ -44,21 +56,33 @@ async function render({ scroll = true } = {}) {
   cleanup?.()
   cleanup = null
 
+  let viewer = null
+  if (route.name === 'game' || route.name === 'analysis') {
+    try {
+      viewer = await loadViewer()
+    } catch (err) {
+      viewer = { error: err }
+    }
+    if (token !== renderToken) return
+  }
+
   let html
   let title = ''
   switch (route.name) {
     case 'pairings': html = renderPairings(ctx, route.round); title = 'Pairings'; break
     case 'games': html = renderGames(ctx, route.query); title = 'Games'; break
-    case 'game': {
-      html = renderViewer(ctx, route.id)
-      const p = ctx.model.pairingById.get(route.id)
-      title = p ? `${p.white.short} – ${p.black.short}` : 'Game'
-      break
-    }
+    case 'game':
     case 'analysis': {
-      html = renderViewer(ctx, route.id, { analysis: true })
+      if (viewer.error) {
+        html = `<section class="view"><a class="back" href="#/games">${icon.chevronLeft}Games</a><div class="card empty">The game viewer couldn't load. A content blocker may be stopping one of its scripts.<br><small>${esc(viewer.error.message)}</small></div></section>`
+        title = 'Game'
+        break
+      }
+      const analysis = route.name === 'analysis'
+      html = viewer.renderViewer(ctx, route.id, { analysis })
       const p = ctx.model.pairingById.get(route.id)
-      title = p ? `Analysis · ${p.white.short} – ${p.black.short}` : 'Analysis'
+      const names = p ? `${p.white.short} – ${p.black.short}` : ''
+      title = analysis ? (names ? `Analysis · ${names}` : 'Analysis') : names || 'Game'
       break
     }
     case 'stats': html = renderStats(ctx); title = 'Stats'; break
@@ -73,8 +97,8 @@ async function render({ scroll = true } = {}) {
   }
   if (scroll) window.scrollTo({ top: 0 })
 
-  if (route.name === 'game' || route.name === 'analysis') {
-    const dispose = await mountViewer(ctx, main, route.id, route.ply, { analysis: route.name === 'analysis' })
+  if (viewer && !viewer.error) {
+    const dispose = await viewer.mountViewer(ctx, main, route.id, route.ply, { analysis: route.name === 'analysis' })
     if (token !== renderToken) dispose()
     else cleanup = dispose
   }

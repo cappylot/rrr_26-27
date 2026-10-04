@@ -14,7 +14,7 @@ import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { loadTournament } from '../js/data.js'
 import { UciEngine } from '../js/uci.js'
-import { analyseGame } from '../js/analyse.js'
+import { analyseGame } from '../js/evaluate.js'
 import { movesHash, REVIEW_VERSION } from '../js/review.js'
 
 const root = new URL('../', import.meta.url)

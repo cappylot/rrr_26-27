@@ -14,12 +14,12 @@ import { movetext } from './pgn.js'
 import { icon, sidePoints, sideClass, terminationLabel, gameDate, copyText, loadSprite, toast } from './ui.js'
 import { download, slug } from './export.js'
 import { LABEL, buildReview, movesHash, parseUci } from './review.js'
-import { analyseGame } from './analyse.js'
+import { analyseGame } from './evaluate.js'
 import { loadOpenings } from './data.js'
 import { getEngine, createEngine, stopEngine, loadSettings, saveSettings, loadLocalReview, saveLocalReview } from './engine.js'
 import {
   evalBarHtml, updateEvalBar, engineCardHtml, linesHtml, reviewCardHtml, graphSvg, moveGraphCursor, reviewNote,
-} from './analysisUi.js'
+} from './engineUi.js'
 
 const LASTMOVE = { class: 'marker-lastmove', slice: 'markerSquare' }
 const CHECK = { class: 'marker-check', slice: 'markerCircleFilled' }
