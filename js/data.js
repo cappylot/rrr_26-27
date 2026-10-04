@@ -4,6 +4,7 @@
 import { buildModel } from './tournament.js'
 import { parseGame, classifyOpening } from './pgn.js'
 import { resultLabel } from './format.js'
+import { buildReview } from './review.js'
 
 const defaultFetchText = async (path) => {
   const res = await fetch(path, { cache: 'no-cache' })
@@ -25,8 +26,21 @@ export async function loadTournament({ base = 'data/', fetchText = defaultFetchT
     if (p.finished && p.game.result !== '*' && p.game.result !== p.result && p.category === 'played') {
       model.problems.push(`Round ${p.round}, board ${p.board}: tournament.json says ${resultLabel(p.result)} but the PGN says ${resultLabel(p.game.result)}.`)
     }
+    if (p.finished && p.game.moves.length) p.review = await loadReview(p, base, fetchText)
   }))
   return model
+}
+
+/**
+ * The engine review for a finished game, from data/analysis/<id>.json (written by
+ * tools/analyze.mjs). Missing until the analysis has run; a file for older moves is ignored.
+ */
+async function loadReview(p, base, fetchText) {
+  try {
+    return buildReview(p.game, JSON.parse(await fetchText(`${base}analysis/${p.id}.json`)))
+  } catch {
+    return null
+  }
 }
 
 let openingsPromise = null

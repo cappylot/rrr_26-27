@@ -59,8 +59,20 @@ export function computeStats(model, standingsRows, openingsTable = null) {
       row,
       byColor,
       avgMoves: games.length ? games.reduce((s, c) => s + c.pairing.game.fullMoves, 0) / games.length : null,
+      accuracy: playerAccuracy(games),
     }
   })
+
+  // Engine reviews (data/analysis/): one entry per side of every reviewed game.
+  const reviewed = withGame.filter((p) => p.review)
+  const performances = reviewed.flatMap((p) => [['white', 'w'], ['black', 'b']]
+    .filter(([, c]) => p.review[c].accuracy != null)
+    .map(([color, c]) => ({ pairing: p, player: p[color], color: c, accuracy: p.review[c].accuracy })))
+  const gameAccuracies = reviewed
+    .filter((p) => p.review.w.accuracy != null && p.review.b.accuracy != null)
+    .map((p) => ({ pairing: p, accuracy: (p.review.w.accuracy + p.review.b.accuracy) / 2 }))
+    .sort((a, b) => b.accuracy - a.accuracy)
+  const accuracyRanking = players.filter((x) => x.accuracy).sort((a, b) => b.accuracy.avg - a.accuracy.avg)
 
   return {
     finished: n,
@@ -80,6 +92,30 @@ export function computeStats(model, standingsRows, openingsTable = null) {
     openings: [...openings.values()].sort((a, b) => b.games.length - a.games.length || a.name.localeCompare(b.name)),
     castling,
     players,
+    reviewed: reviewed.length,
+    avgAccuracy: performances.length ? performances.reduce((s, x) => s + x.accuracy, 0) / performances.length : null,
+    mostAccurateGame: gameAccuracies[0] ?? null,
+    bestPerformance: [...performances].sort((a, b) => b.accuracy - a.accuracy)[0] ?? null,
+    accuracyRanking,
+  }
+}
+
+/** A player's figures over their reviewed games, or null when none is reviewed yet. */
+export function playerAccuracy(cards) {
+  const reviewed = cards.filter((c) => c.pairing.review?.[c.color]?.accuracy != null)
+  if (!reviewed.length) return null
+  const sides = reviewed.map((c) => ({ pairing: c.pairing, ...c.pairing.review[c.color] }))
+  const sum = (k) => sides.reduce((s, x) => s + (x[k] ?? 0), 0)
+  const best = sides.reduce((a, b) => (b.accuracy > a.accuracy ? b : a))
+  return {
+    games: sides.length,
+    avg: sum('accuracy') / sides.length,
+    acpl: sum('acpl') / sides.length,
+    inaccuracies: sum('inaccuracy'),
+    mistakes: sum('mistake'),
+    blunders: sum('blunder'),
+    best: { pairing: best.pairing, accuracy: best.accuracy },
+    perGame: sides,
   }
 }
 

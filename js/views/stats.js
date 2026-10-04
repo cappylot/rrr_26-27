@@ -51,6 +51,8 @@ export function renderStats(ctx) {
       ${s.longest ? fact('Longest game', s.longest) : ''}
     </div>
 
+    ${accuracySection(s)}
+
     <div class="two-col">
       <div class="card">
         <div class="card-head"><h2>First moves</h2></div>
@@ -92,22 +94,63 @@ export function renderStats(ctx) {
           <thead><tr>
             <th class="t-left">Player</th><th><abbr title="Games">G</abbr></th><th><abbr title="Wins">W</abbr></th><th><abbr title="Draws">D</abbr></th><th><abbr title="Losses">L</abbr></th>
             <th><abbr title="Points with White / games with White">White</abbr></th><th><abbr title="Points with Black / games with Black">Black</abbr></th><th><abbr title="Average game length in moves">Avg</abbr></th>
+            <th><abbr title="Average accuracy (engine review)">Acc</abbr></th><th><abbr title="Average centipawn loss">ACPL</abbr></th><th><abbr title="Blunders">??</abbr></th>
           </tr></thead>
           <tbody>
-            ${s.players.map(({ row, byColor, avgMoves }) => `<tr>
+            ${s.players.map(({ row, byColor, avgMoves, accuracy }) => `<tr>
               <td class="t-left"><a href="#/player/${esc(row.player.id)}"><span class="full">${esc(row.player.display)}</span><span class="short">${esc(row.player.short)}</span></a></td>
               <td>${row.finished}</td><td>${row.wins}</td><td>${row.draws}</td><td>${row.losses}</td>
               <td>${byColor.w.games ? `${score(byColor.w.points)}/${byColor.w.games}` : '–'}</td>
               <td>${byColor.b.games ? `${score(byColor.b.points)}/${byColor.b.games}` : '–'}</td>
               <td>${avgMoves == null ? '–' : Math.round(avgMoves)}</td>
+              <td>${accuracy ? `${Math.round(accuracy.avg)}%` : '–'}</td>
+              <td>${accuracy ? Math.round(accuracy.acpl) : '–'}</td>
+              <td>${accuracy ? accuracy.blunders : '–'}</td>
             </tr>`).join('')}
           </tbody>
         </table>
       </div>
     </div>
 
-    <p class="legend-line">Results count every finished game in the tournament; move-based figures use the games that have a PGN. Forfeits are left out.</p>
+    <p class="legend-line">Results count every finished game in the tournament; move-based figures use the games that have a PGN. Forfeits are left out. Accuracy, ACPL and blunders come from Stockfish reviews of the games (Lichess formula).</p>
   </section>`
+}
+
+function accuracySection(s) {
+  if (!s.reviewed) return ''
+  const top = s.accuracyRanking[0]
+  const game = s.mostAccurateGame
+  const perf = s.bestPerformance
+  const pct = (v) => `${Math.round(v)}%`
+  return `
+    <div class="facts-grid three">
+      ${top ? `<a class="card fact" href="#/player/${esc(top.row.player.id)}">
+        <span class="label">Most accurate player</span>
+        <strong>${esc(top.row.player.display)}</strong>
+        <span>${pct(top.accuracy.avg)} average · ${plural(top.accuracy.games, 'game')}</span>
+      </a>` : ''}
+      ${game ? `<a class="card fact" href="#/game/${game.pairing.id}">
+        <span class="label">Most accurate game</span>
+        <strong>${esc(game.pairing.white.display)} – ${esc(game.pairing.black.display)}</strong>
+        <span>${pct(game.pairing.review.w.accuracy)} / ${pct(game.pairing.review.b.accuracy)} · round ${game.pairing.round}</span>
+      </a>` : ''}
+      ${perf ? `<a class="card fact" href="#/game/${perf.pairing.id}">
+        <span class="label">Best single game</span>
+        <strong>${esc(perf.player.display)}</strong>
+        <span>${pct(perf.accuracy)} with ${perf.color === 'w' ? 'White' : 'Black'} · round ${perf.pairing.round}</span>
+      </a>` : ''}
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>Accuracy</h2><span class="hint">average per player · ${plural(s.reviewed, 'reviewed game')}</span></div>
+      ${bars(s.accuracyRanking.map((x) => ({
+        label: `<a href="#/player/${esc(x.row.player.id)}">${esc(x.row.player.short)}</a>`,
+        html: true,
+        tip: `${x.row.player.display} · ${plural(x.accuracy.games, 'game')}`,
+        value: Math.round(x.accuracy.avg),
+        unit: '%',
+      })))}
+    </div>`
 }
 
 function kpi(label, value, note) {

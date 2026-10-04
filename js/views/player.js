@@ -1,4 +1,5 @@
-import { esc, score, resultLabel } from '../format.js'
+import { esc, score, resultLabel, plural } from '../format.js'
+import { playerAccuracy } from '../stats.js'
 import { TIEBREAKS } from '../standings.js'
 import { displayedTiebreaks } from '../export.js'
 import { avatar, icon, statusLabel } from '../ui.js'
@@ -39,32 +40,50 @@ export function renderPlayer(ctx, id) {
       <div class="card kpi"><span class="label">Tiebreaks</span><span class="value" style="font-size:18px;line-height:1.5">${tbs.map((m) => `<abbr title="${esc(TIEBREAKS[m].name)}" style="text-decoration:none">${esc(m)}</abbr> ${score(row.tiebreaks[m] ?? 0)}`).join(' · ')}</span></div>
     </div>
 
+    ${accuracyKpis(row)}
+
     <h2 class="section-title">Rounds</h2>
     <div class="card">
       <div class="table-wrap">
         <table>
-          <thead><tr><th class="t-left">Rd</th><th class="t-left">Opponent</th><th class="t-center">Colour</th><th>Result</th><th></th></tr></thead>
-          <tbody>${lines.join('') || '<tr><td colspan="5" class="t-center muted">No games yet.</td></tr>'}</tbody>
+          <thead><tr><th class="t-left">Rd</th><th class="t-left">Opponent</th><th class="t-center">Colour</th><th>Result</th><th><abbr title="Accuracy (engine review)">Acc</abbr></th><th></th></tr></thead>
+          <tbody>${lines.join('') || '<tr><td colspan="6" class="t-center muted">No games yet.</td></tr>'}</tbody>
         </table>
       </div>
     </div>
   </section>`
 }
 
+function accuracyKpis(row) {
+  const a = playerAccuracy(row.cards.filter((c) => c.category === 'played'))
+  if (!a) return ''
+  const best = a.best.pairing
+  const opp = best.white.id === row.player.id ? best.black : best.white
+  return `
+    <div class="kpis">
+      <div class="card kpi"><span class="label">Accuracy</span><span class="value">${Math.round(a.avg)}<small>%</small></span><span class="note">average of ${plural(a.games, 'reviewed game')}</span></div>
+      <a class="card kpi" href="#/game/${best.id}"><span class="label">Best game</span><span class="value">${Math.round(a.best.accuracy)}<small>%</small></span><span class="note">vs ${esc(opp.short)} · round ${best.round}</span></a>
+      <div class="card kpi"><span class="label">Blunders per game</span><span class="value">${(a.blunders / a.games).toFixed(1)}</span><span class="note">${plural(a.mistakes, 'mistake')} · ${plural(a.inaccuracies, 'inaccuracy', 'inaccuracies')}</span></div>
+      <div class="card kpi"><span class="label">Avg centipawn loss</span><span class="value">${Math.round(a.acpl)}</span><span class="note">lower is better</span></div>
+    </div>`
+}
+
 function roundLine(model, pairing, id) {
   if (!pairing.black) {
-    return `<tr><td class="t-left">${pairing.round}</td><td class="t-left">Bye</td><td></td><td>${score(pairing.points.white ?? 0)}</td><td></td></tr>`
+    return `<tr><td class="t-left">${pairing.round}</td><td class="t-left">Bye</td><td></td><td>${score(pairing.points.white ?? 0)}</td><td></td><td></td></tr>`
   }
   const isWhite = pairing.white.id === id
   const opp = isWhite ? pairing.black : pairing.white
   const mine = pairing.points[isWhite ? 'white' : 'black']
   const res = pairing.finished ? `<strong>${score(mine)}</strong> <span class="muted">(${esc(resultLabel(pairing.result))})</span>` : `<span class="live-pill${pairing.status === 'ongoing' ? '' : ' quiet'}">${esc(statusLabel(pairing) === 'In progress' ? 'Live' : statusLabel(pairing))}</span>`
+  const acc = pairing.review?.[isWhite ? 'w' : 'b']?.accuracy ?? null
   const link = pairing.game ? `<a class="board-link" href="#/game/${pairing.id}">Game${icon.chevronRight}</a>` : ''
   return `<tr>
     <td class="t-left">${pairing.round}</td>
     <td class="t-left"><a href="#/player/${esc(opp.id)}">${esc(opp.display)}</a></td>
     <td class="t-center"><span class="piece-dot ${isWhite ? 'w' : 'b'}" style="display:inline-block;vertical-align:middle" role="img" aria-label="${isWhite ? 'White' : 'Black'}"></span></td>
     <td>${res}</td>
+    <td>${acc == null ? '<span class="muted">–</span>' : `${Math.round(acc)}%`}</td>
     <td>${link}</td>
   </tr>`
 }
