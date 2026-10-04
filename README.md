@@ -77,6 +77,28 @@ unknown player id or a player paired twice, a yellow banner lists the problem.
 On phones and tablets, pinch-zoom and double-tap zoom are turned off so the site behaves like an
 app. Desktop browser zoom (Ctrl/⌘ +) still works.
 
+### 4. Engine analysis (automatic)
+
+After you push a new PGN to `main`, the **Analyse games** GitHub Action runs Stockfish over every
+finished game at depth 22. It commits the result as `data/analysis/r<round>-b<board>.json`, which
+usually takes a few minutes. The site turns these files into the game review (accuracy,
+inaccuracies ?!, mistakes ? and blunders ??, eval graph) and the accuracy figures on the Stats and
+player pages. The Action needs **Settings → Actions → General → Workflow permissions → Read and
+write**. You can also start it by hand from the Actions tab, or run it locally:
+
+```sh
+npm run analyze                   # uses a native `stockfish` if installed, else the bundled WASM
+node tools/analyze.mjs --force r2-b1   # redo one game
+```
+
+Accuracy uses the Lichess formula, and the move labels use Lichess' win-chance thresholds. A file
+whose moves no longer match the PGN is ignored until it is regenerated.
+
+Visitors also get a live engine (Stockfish 19 lite, running in their browser) in the game viewer.
+It shows the eval bar, up to 5 lines and a best-move arrow. There is also an **Analyze** view where
+you can play your own moves. If a game has no review yet, visitors can generate one in their
+browser. That review is only stored for them and isn't counted in the stats.
+
 ## Standings and tiebreaks
 
 The standings use ChessManager's round-robin rules, so the site and the app always agree:
@@ -112,6 +134,8 @@ npm run serve       # http://localhost:8080
 | `css/style.css` | Screen styles. The colours are the ChessManager palette. |
 | `css/print.css` | Print and PDF layout. |
 | `data/openings.json` | The ECO opening table. Regenerate it with `tools/build-openings.mjs`. |
+| `js/review.js`, `js/uci.js`, `js/analyse.js` | Engine review maths (tested), the UCI client and the analysis runner shared by the browser and `tools/analyze.mjs`. |
+| `data/analysis/` | Stockfish evaluations per game, written by `tools/analyze.mjs`. |
 | `vendor/` | Third-party libraries, copied in unchanged. |
 
 ## Credits
@@ -119,4 +143,6 @@ npm run serve       # http://localhost:8080
 - **[chess.js](https://github.com/jhlywa/chess.js):** BSD-2-Clause.
 - **[cm-chessboard](https://github.com/shaack/cm-chessboard):** MIT. It includes the standard
   chess pieces by Cburnett from Wikimedia Commons, licensed CC BY-SA 3.0.
+- **[Stockfish](https://stockfishchess.org/)** via [stockfish.js](https://github.com/nmrugg/stockfish.js):
+  GPLv3 (see `vendor/stockfish/Copying.txt`).
 - **Opening names:** from the ECO table in [chess-openings](https://www.npmjs.com/package/chess-openings), licensed WTFPL.

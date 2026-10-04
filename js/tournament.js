@@ -93,6 +93,7 @@ export function buildModel(json) {
             date: p.date ?? r.date ?? null,
             pgnPath: p.pgn ?? null,
             game: null, // filled in by the loader once the PGN has been parsed
+            review: null, // engine review from data/analysis/, when there is one
           }
         })
       return { number: r.number, date: r.date ?? null, pairings }

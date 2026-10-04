@@ -58,9 +58,17 @@ export function gameCard(p) {
           ${line(p, 'black')}
         </span>
         <span class="opening">${p.opening ? `${p.opening.eco ? `<b>${esc(p.opening.eco)}</b> ` : ''}${esc(p.opening.name)}` : '&nbsp;'}</span>
-        <span class="facts">${facts.map((f) => `<span>${esc(f)}</span>`).join('')}${end ? `<span class="badge ${g.termination === 'checkmate' ? 'mate' : ''}">${esc(end)}</span>` : ''}</span>
+        <span class="facts">${facts.map((f) => `<span>${esc(f)}</span>`).join('')}${end ? `<span class="badge ${g.termination === 'checkmate' ? 'mate' : ''}">${esc(end)}</span>` : ''}${accuracyChip(p)}</span>
       </span>
     </a>`
+}
+
+function accuracyChip(p) {
+  const r = p.review
+  if (r?.w.accuracy == null || r?.b.accuracy == null) return ''
+  const w = Math.round(r.w.accuracy)
+  const b = Math.round(r.b.accuracy)
+  return `<span class="badge acc" title="Accuracy: White ${w}%, Black ${b}%">Acc ${w} · ${b}</span>`
 }
 
 function line(p, color) {

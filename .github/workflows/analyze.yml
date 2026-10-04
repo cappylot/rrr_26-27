@@ -1,0 +1,44 @@
+# Runs Stockfish over every finished game that has no up-to-date review yet and commits the
+# results to data/analysis/. The site turns these into game reviews and accuracy stats.
+name: Analyse games
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/games/**'
+      - 'data/tournament.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: analyse-games
+  cancel-in-progress: false
+
+jobs:
+  analyse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Stockfish
+        run: sudo apt-get update && sudo apt-get install -y stockfish
+      - name: Analyse
+        run: node tools/analyze.mjs --depth 22 --engine /usr/games/stockfish
+      - name: Commit reviews
+        run: |
+          git add data/analysis
+          if git diff --cached --quiet; then
+            echo "Nothing new to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Add engine analysis for new games"
+          git pull --rebase origin main
+          git push

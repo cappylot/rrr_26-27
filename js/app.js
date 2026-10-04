@@ -28,13 +28,14 @@ function parseRoute() {
     case 'pairings': return { name: 'pairings', round: Number(parts[1]) || null, query }
     case 'games': return { name: 'games', query }
     case 'game': return { name: 'game', id: parts[1], ply: parts[2] != null ? Number(parts[2]) : null, query }
+    case 'analysis': return { name: 'analysis', id: parts[1], ply: parts[2] != null ? Number(parts[2]) : null, query }
     case 'stats': return { name: 'stats', query }
     case 'player': return { name: 'player', id: decodeURIComponent(parts[1] ?? ''), query }
     default: return { name: 'standings', query }
   }
 }
 
-const NAV_FOR = { standings: 'standings', player: 'standings', pairings: 'pairings', games: 'games', game: 'games', stats: 'stats' }
+const NAV_FOR = { standings: 'standings', player: 'standings', pairings: 'pairings', games: 'games', game: 'games', analysis: 'games', stats: 'stats' }
 
 async function render({ scroll = true } = {}) {
   const token = ++renderToken
@@ -54,6 +55,12 @@ async function render({ scroll = true } = {}) {
       title = p ? `${p.white.short} – ${p.black.short}` : 'Game'
       break
     }
+    case 'analysis': {
+      html = renderViewer(ctx, route.id, { analysis: true })
+      const p = ctx.model.pairingById.get(route.id)
+      title = p ? `Analysis · ${p.white.short} – ${p.black.short}` : 'Analysis'
+      break
+    }
     case 'stats': html = renderStats(ctx); title = 'Stats'; break
     case 'player': html = renderPlayer(ctx, route.id); title = ctx.model.playerById.get(route.id)?.display ?? 'Player'; break
     default: html = renderStandings(ctx); title = 'Standings'
@@ -66,8 +73,8 @@ async function render({ scroll = true } = {}) {
   }
   if (scroll) window.scrollTo({ top: 0 })
 
-  if (route.name === 'game') {
-    const dispose = await mountViewer(ctx, main, route.id, route.ply)
+  if (route.name === 'game' || route.name === 'analysis') {
+    const dispose = await mountViewer(ctx, main, route.id, route.ply, { analysis: route.name === 'analysis' })
     if (token !== renderToken) dispose()
     else cleanup = dispose
   }
@@ -171,7 +178,7 @@ async function start() {
     attachOpenings(ctx.model, ctx.openings)
     recompute()
     if (['games', 'stats'].includes(ctx.route.name)) render({ scroll: false })
-    else if (ctx.route.name === 'game') {
+    else if (ctx.route.name === 'game' || ctx.route.name === 'analysis') {
       const el = main.querySelector('[data-opening]')
       const p = ctx.model.pairingById.get(ctx.route.id)
       if (el && p?.opening) el.textContent = `${p.opening.eco} ${p.opening.name}`
