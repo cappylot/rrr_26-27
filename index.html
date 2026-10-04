@@ -27,7 +27,15 @@
     // Apply a saved theme before first paint so there's no flash.
     try { const t = localStorage.getItem('rrr-theme'); if (t) document.documentElement.dataset.theme = t } catch {}
   </script>
-  <script type="module" src="js/app.js"></script>
+  <script type="module">
+    // Load the app; if a script can't load (often a content blocker), say so instead of
+    // leaving "Loading tournament…" on screen forever.
+    import('./js/app.js').catch((err) => {
+      const main = document.getElementById('main')
+      main.innerHTML = '<div class="card empty">Couldn\'t load the site. If you use a content or ad blocker, try turning it off for this page.<br><small></small></div>'
+      main.querySelector('small').textContent = err && err.message ? err.message : String(err)
+    })
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
