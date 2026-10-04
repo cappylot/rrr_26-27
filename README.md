@@ -61,7 +61,7 @@ ids are listed under `"players"`.
 {
   "number": 2,
   "pairings": [
-    { "board": 1, "white": "gruenzner",   "black": "j-peukert",  "result": "*" },
+    { "board": 1, "white": "friedrich",   "black": "j-peukert",  "result": "*" },
     { "board": 2, "white": "johnen",      "black": "kaplow",     "result": "*" },
     { "board": 3, "white": "grozea",      "black": "h-peukert",  "result": "*" },
     { "board": 4, "white": "tomaszewski", "black": "guo",        "result": "*" }
