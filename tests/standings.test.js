@@ -9,17 +9,17 @@ test('round 1 standings match the ChessManager tiebreak order', async () => {
   const model = await loadReal()
   assert.deepEqual(model.problems, [])
   const rows = computeStandings(model)
-  assert.deepEqual(order(rows), ['j-peukert', 'tomaszewski', 'h-peukert', 'johnen', 'kaplow', 'guo', 'grozea', 'gruenzner'])
+  assert.deepEqual(order(rows), ['j-peukert', 'kaplow', 'tomaszewski', 'h-peukert', 'johnen', 'guo', 'grozea', 'friedrich'])
   assert.deepEqual(rows.map((r) => r.rank), [1, 2, 3, 4, 5, 6, 7, 8])
-  assert.deepEqual(rows.map((r) => r.score), [1, 1, 0.5, 0.5, 0, 0, 0, 0])
-  // Jonathan and Vincent: SB 0, no mutual game, one win each → Jonathan's win with Black decides.
+  assert.deepEqual(rows.map((r) => r.score), [1, 1, 1, 0.5, 0.5, 0, 0, 0])
+  // Jonathan, Orfeo and Vincent: SB 0, no mutual games, one win each → Jonathan's win with Black decides.
   assert.equal(rows[0].tiebreaks.BWG, 1)
   assert.equal(rows[1].tiebreaks.BWG, 0)
   // Hauke and Paul drew each other: SB ¼ each, DE equal, so it comes down to pairing number.
-  assert.equal(rows[2].tiebreaks.SB, 0.25)
   assert.equal(rows[3].tiebreaks.SB, 0.25)
-  // Orfeo and Malwin's game is still going: no points, no games counted.
-  assert.equal(rows.find((r) => r.player.id === 'kaplow').played, 0)
+  assert.equal(rows[4].tiebreaks.SB, 0.25)
+  // Orfeo beat Florian in round 1.
+  assert.equal(rows.find((r) => r.player.id === 'kaplow').played, 1)
 })
 
 // Two players on 2½ with equal SB, WIN and BWG; e beat b, so direct encounter puts e first.
@@ -77,14 +77,16 @@ test('cross-table is rank-ordered with results mirrored and live games marked', 
   const idx = (id) => rows.findIndex((r) => r.player.id === id)
   assert.equal(cells[idx('j-peukert')][idx('guo')].points, 1)
   assert.equal(cells[idx('guo')][idx('j-peukert')].points, 0)
-  assert.equal(cells[idx('kaplow')][idx('gruenzner')].kind, 'live')
+  assert.equal(cells[idx('kaplow')][idx('friedrich')].points, 1)
   assert.equal(cells[0][0].kind, 'self')
-  assert.equal(cells[idx('kaplow')][idx('guo')], null)
+  assert.equal(cells[idx('kaplow')][idx('guo')].kind, 'live')
+  assert.equal(cells[idx('kaplow')][idx('grozea')], null)
 })
 
 test('standings record which tiebreak separated tied neighbours', async () => {
   const rows = computeStandings(await loadReal())
-  assert.equal(rows[0].decidedBy, 'BWG')   // Jonathan over Vincent
-  assert.equal(rows[1].decidedBy, null)    // next player has fewer points
-  assert.equal(rows[2].decidedBy, 'LOT')   // Hauke over Paul
+  assert.equal(rows[0].decidedBy, 'BWG')   // Jonathan over Orfeo and Vincent
+  assert.equal(rows[1].decidedBy, 'LOT')   // Orfeo over Vincent
+  assert.equal(rows[2].decidedBy, null)    // next player has fewer points
+  assert.equal(rows[3].decidedBy, 'LOT')   // Hauke over Paul
 })
