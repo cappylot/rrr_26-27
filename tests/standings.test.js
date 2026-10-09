@@ -1,12 +1,12 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { computeStandings, crossTable } from '../js/standings.js'
-import { loadReal, fixture } from './helpers.js'
+import { loadRound1, fixture } from './helpers.js'
 
 const order = (rows) => rows.map((r) => r.player.id)
 
 test('round 1 standings match the ChessManager tiebreak order', async () => {
-  const model = await loadReal()
+  const model = await loadRound1()
   assert.deepEqual(model.problems, [])
   const rows = computeStandings(model)
   assert.deepEqual(order(rows), ['j-peukert', 'kaplow', 'tomaszewski', 'h-peukert', 'johnen', 'guo', 'grozea', 'friedrich'])
@@ -72,7 +72,7 @@ test('forfeits score but do not count as games played', () => {
 })
 
 test('cross-table is rank-ordered with results mirrored and live games marked', async () => {
-  const model = await loadReal()
+  const model = await loadRound1()
   const { rows, cells } = crossTable(model)
   const idx = (id) => rows.findIndex((r) => r.player.id === id)
   assert.equal(cells[idx('j-peukert')][idx('guo')].points, 1)
@@ -84,7 +84,7 @@ test('cross-table is rank-ordered with results mirrored and live games marked', 
 })
 
 test('standings record which tiebreak separated tied neighbours', async () => {
-  const rows = computeStandings(await loadReal())
+  const rows = computeStandings(await loadRound1())
   assert.equal(rows[0].decidedBy, 'BWG')   // Jonathan over Orfeo and Vincent
   assert.equal(rows[1].decidedBy, 'LOT')   // Orfeo over Vincent
   assert.equal(rows[2].decidedBy, null)    // next player has fewer points

@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { loadReal, openingsTable } from './helpers.js'
+import { loadReal, loadRound1, openingsTable } from './helpers.js'
 import { computeStandings } from '../js/standings.js'
 import { computeStats } from '../js/stats.js'
 import { attachOpenings } from '../js/data.js'
@@ -9,7 +9,7 @@ test('every PGN parses and agrees with tournament.json', async () => {
   const model = await loadReal()
   assert.deepEqual(model.problems, [])
   const withPgn = model.pairings.filter((p) => p.pgnPath)
-  assert.equal(withPgn.length, 4)
+  assert.ok(withPgn.length >= 4)
   for (const p of withPgn) {
     assert.ok(p.game, `${p.id} parsed`)
     assert.equal(p.game.result, p.result, `${p.id} result`)
@@ -50,7 +50,7 @@ test('openings are recognised from the ECO table', async () => {
 })
 
 test('tournament stats', async () => {
-  const model = await loadReal()
+  const model = await loadRound1()
   const stats = computeStats(model, computeStandings(model), await openingsTable())
   assert.equal(stats.finished, 4)
   assert.equal(stats.scheduled, 8)

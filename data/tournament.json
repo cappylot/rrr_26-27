@@ -4,7 +4,7 @@
   "format": "Round robin",
   "timeControl": "Classical",
   "totalRounds": 7,
-  "updated": "2026-10-04",
+  "updated": "2026-10-09",
   "scoring": { "win": 1, "draw": 0.5, "loss": 0, "bye": 0 },
   "tiebreaks": ["SB", "DE", "WIN", "BWG", "LOT"],
   "players": [
@@ -33,7 +33,7 @@
         { "board": 1, "white": "friedrich",   "black": "grozea",      "result": "*" },
         { "board": 2, "white": "johnen",      "black": "tomaszewski", "result": "*" },
         { "board": 3, "white": "j-peukert",   "black": "h-peukert",   "result": "*" },
-        { "board": 4, "white": "kaplow",      "black": "guo",         "result": "*" }
+        { "board": 4, "white": "kaplow",      "black": "guo",         "result": "1-0", "date": "2026-10-09", "pgn": "games/r2-b4.pgn" }
       ]
     }
   ]
