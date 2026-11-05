@@ -71,6 +71,16 @@ test('forfeits score but do not count as games played', () => {
   assert.equal(a.tiebreaks.WIN, 1)
 })
 
+test('forfeit wins add nothing to SB, even once the absent opponent has points', () => {
+  const rows = computeStandings(fixture(['a', 'b', 'c', 'd'], [
+    [['a', 'd', '+-'], ['b', 'c', '1-0']],
+    [['d', 'c', '1-0'], ['a', 'b', '1/2-1/2']],
+  ]))
+  const a = rows.find((r) => r.player.id === 'a')
+  assert.equal(a.score, 1.5)
+  assert.equal(a.tiebreaks.SB, 0.5 * 1.5) // only the draw with b (1½) counts
+})
+
 test('cross-table is rank-ordered with results mirrored and live games marked', async () => {
   const model = await loadRound1()
   const { rows, cells } = crossTable(model)

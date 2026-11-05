@@ -9,8 +9,8 @@ export const fetchText = (path) => readFile(new URL(`../${path}`, import.meta.ur
 export const loadReal = () => loadTournament({ base: 'data/', fetchText })
 
 /**
- * The real data frozen after round 1: later rounds keep their pairings but lose their results,
- * so the snapshot assertions below don't break every time a new result is entered.
+ * The real data frozen after round 1: round 2 keeps its pairings but loses its results and later
+ * rounds are dropped, so the snapshot assertions don't break whenever a result or round is added.
  */
 export const loadRound1 = () => loadTournament({
   base: 'data/',
@@ -18,6 +18,7 @@ export const loadRound1 = () => loadTournament({
     const text = await fetchText(path)
     if (!path.endsWith('tournament.json')) return text
     const t = JSON.parse(text)
+    t.rounds = t.rounds.filter((r) => r.number <= 2)
     for (const r of t.rounds) {
       if (r.number === 1) continue
       r.pairings = r.pairings.map(({ board, white, black }) => ({ board, white, black, result: '*' }))

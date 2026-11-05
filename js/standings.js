@@ -41,7 +41,10 @@ export function computeStandings(model) {
   const played = (id) => cards.get(id).filter((c) => c.category === 'played')
 
   const value = {
-    SB: (id) => sum(contributions(id).map((x) => x.card.points * x.value)),
+    // Forfeits add nothing to SB: no game was played, so there is no opponent's score to credit.
+    SB: (id) => sum(contributions(id)
+      .filter((x) => x.card.category !== 'forfeitWin' && x.card.category !== 'forfeitLoss')
+      .map((x) => x.card.points * x.value)),
     BH: (id) => sum(contributions(id).map((x) => x.value)),
     WIN: (id) => cards.get(id).filter((c) =>
       c.category === 'forfeitWin' || ((c.category === 'played' || c.category === 'bye') && eq(c.points, scoring.win) && c.points > 0)).length,
