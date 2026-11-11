@@ -4,7 +4,7 @@
   "format": "Round robin",
   "timeControl": "Classical",
   "totalRounds": 7,
-  "updated": "2026-11-05",
+  "updated": "2026-11-11",
   "scoring": { "win": 1, "draw": 0.5, "loss": 0, "bye": 0 },
   "tiebreaks": ["SB", "DE", "WIN", "BWG", "LOT"],
   "players": [
@@ -39,7 +39,7 @@
     {
       "number": 3,
       "pairings": [
-        { "board": 1, "white": "guo",         "black": "friedrich", "result": "*" },
+        { "board": 1, "white": "guo",         "black": "friedrich", "result": "1-0", "date": "2026-11-11", "pgn": "games/r3-b1.pgn" },
         { "board": 2, "white": "h-peukert",   "black": "kaplow",    "result": "*" },
         { "board": 3, "white": "tomaszewski", "black": "j-peukert", "result": "*" },
         { "board": 4, "white": "grozea",      "black": "johnen",    "result": "*" }
